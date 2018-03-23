@@ -15,6 +15,12 @@ import javax.swing.JFrame;
 import javax.swing.Timer;
 
 public class FlappyBird implements ActionListener, MouseListener {
+	// TODO: add key listener so spacebar can be clicked for the jump action
+	// TODO: add a score counter for the number of pipes cleared
+	// TODO: add graphics for bird and possibly pipes
+	// TODO: WRITE TESTS
+	// TODO: refactor. this code is really sloppy and basic. 
+	
 	public static FlappyBird flappyBird;
 	public final int DEFAULT_WIDTH = 700;
 	public final int DEFAULT_HEIGHT = 700;
