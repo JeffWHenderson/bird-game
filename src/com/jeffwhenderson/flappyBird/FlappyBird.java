@@ -34,7 +34,7 @@ public class FlappyBird implements ActionListener {
 		jframe.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		jframe.setTitle("Bird that flaps game");
 		jframe.setVisible(1 > 0);
-		jframe.setResizable(1 < 0);
+//		jframe.setResizable(1 < 0);
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // this line will close program out properly
 		
 		bird = new Rectangle(DEFAULT_WIDTH/2 - 10, DEFAULT_HEIGHT/2 - 10, 20, 20);
@@ -68,7 +68,26 @@ public class FlappyBird implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		int speed = 30;
+		
 		ticks ++;
+		for(int i =  0; i < columns.size(); i ++) {
+			Rectangle column = columns.get(i);
+			
+			column.x -= speed;
+		}
+		
+		for(int i =  0; i < columns.size(); i ++) {
+			Rectangle column = columns.get(i);
+			
+			if(column.x + column.width < 0) {
+				columns.remove(column);
+				
+				if(column.y== 0) { // question this logic
+					addColumn(false);
+				}
+			}
+		}
 		
 		if(ticks % 2 == 0 && yMotion < 15) {
 			yMotion += 2;
@@ -91,6 +110,10 @@ public class FlappyBird implements ActionListener {
 		
 		g.setColor(Color.red);
 		g.fillRect(bird.x, bird.y, bird.width, bird.height);
+		
+		for(Rectangle column:columns) {
+			paintColumn(g, column);
+		}
 	}
 	
 	public static void main(String[] args) {
