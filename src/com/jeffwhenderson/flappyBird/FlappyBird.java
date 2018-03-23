@@ -1,6 +1,7 @@
 package com.jeffwhenderson.flappyBird;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,8 @@ public class FlappyBird implements ActionListener {
 	public Rectangle bird;
 	public ArrayList<Rectangle> columns;
 	public Random rand;
+	public boolean gameOver;
+	public boolean started = true;
 	
 	public int ticks;
 	public int yMotion;
@@ -68,33 +71,41 @@ public class FlappyBird implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		int speed = 30;
-		
+		int speed = 10;
 		ticks ++;
-		for(int i =  0; i < columns.size(); i ++) {
-			Rectangle column = columns.get(i);
-			
-			column.x -= speed;
-		}
-		
-		for(int i =  0; i < columns.size(); i ++) {
-			Rectangle column = columns.get(i);
-			
-			if(column.x + column.width < 0) {
-				columns.remove(column);
+		if(started) {
+			for(int i =  0; i < columns.size(); i ++) {
+				Rectangle column = columns.get(i);
 				
-				if(column.y== 0) { // question this logic
-					addColumn(false);
+				column.x -= speed;
+			}
+			
+			for(int i =  0; i < columns.size(); i ++) {
+				Rectangle column = columns.get(i);
+				
+				if(column.x + column.width < 0) {
+					columns.remove(column);
+					
+					if(column.y== 0) { // question this logic
+						addColumn(false);
+					}
 				}
 			}
+			
+			if(ticks % 2 == 0 && yMotion < 15) {
+				yMotion += 2;
+			}
+			
+			bird.y += yMotion;
+			
+			for(Rectangle column: columns) {
+				if(bird.intersects(column))
+					gameOver = true;
+			}
+			if(bird.y > DEFAULT_HEIGHT - 120 || bird.y < 0)
+				gameOver = true;
+				
 		}
-		
-		if(ticks % 2 == 0 && yMotion < 15) {
-			yMotion += 2;
-		}
-		
-		bird.y += yMotion;
-		
 		renderer.repaint(); // double buffering.googleIt
 	}
 	
@@ -113,6 +124,13 @@ public class FlappyBird implements ActionListener {
 		
 		for(Rectangle column:columns) {
 			paintColumn(g, column);
+		}
+		
+		g.setColor(Color.white);
+		g.setFont(new Font("Arial", 1, 100));
+		
+		if(gameOver) {
+			g.drawString("Game Over", 75, DEFAULT_HEIGHT/2 - 50);
 		}
 	}
 	
