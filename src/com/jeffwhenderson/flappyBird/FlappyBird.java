@@ -20,6 +20,9 @@ public class FlappyBird implements ActionListener {
 	public ArrayList<Rectangle> columns;
 	public Random rand;
 	
+	public int ticks;
+	public int yMotion;
+	
 	public FlappyBird() {
 		JFrame jframe = new JFrame();
 		Timer timer = new Timer(40, this);
@@ -53,8 +56,8 @@ public class FlappyBird implements ActionListener {
 			columns.add(new Rectangle(DEFAULT_WIDTH + width + columns.size() * 300, DEFAULT_HEIGHT - height - 120, width, height));
 			columns.add(new Rectangle(DEFAULT_WIDTH + width + (columns.size() - 1) * 300, 0, width, DEFAULT_HEIGHT - height - space));
 		} else {
-			columns.add(new Rectangle(columns.get(columns.size - 1).x + 600, DEFAULT_HEIGHT - height - 120, width, height));
-			columns.add(new Rectangle(columns.get(columns.size - 1).x, 0, width, DEFAULT_HEIGHT - height - space));
+			columns.add(new Rectangle(columns.get(columns.size() - 1).x + 600, DEFAULT_HEIGHT - height - 120, width, height));
+			columns.add(new Rectangle(columns.get(columns.size() - 1).x, 0, width, DEFAULT_HEIGHT - height - space));
 		}
 	}
 	
@@ -65,6 +68,14 @@ public class FlappyBird implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		ticks ++;
+		
+		if(ticks % 2 == 0 && yMotion < 15) {
+			yMotion += 2;
+		}
+		
+		bird.y += yMotion;
+		
 		renderer.repaint(); // double buffering.googleIt
 	}
 	
