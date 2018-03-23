@@ -6,13 +6,15 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
-public class FlappyBird implements ActionListener {
+public class FlappyBird implements ActionListener, MouseListener {
 	public static FlappyBird flappyBird;
 	public final int DEFAULT_WIDTH = 700;
 	public final int DEFAULT_HEIGHT = 700;
@@ -21,7 +23,8 @@ public class FlappyBird implements ActionListener {
 	public ArrayList<Rectangle> columns;
 	public Random rand;
 	public boolean gameOver;
-	public boolean started = true;
+	public boolean started;
+	public int speed;
 	
 	public int ticks;
 	public int yMotion;
@@ -37,6 +40,7 @@ public class FlappyBird implements ActionListener {
 		jframe.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		jframe.setTitle("Bird that flaps game");
 		jframe.setVisible(1 > 0);
+		jframe.addMouseListener(this);
 //		jframe.setResizable(1 < 0);
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // this line will close program out properly
 		
@@ -49,6 +53,30 @@ public class FlappyBird implements ActionListener {
 		addColumn(true);
 		
 		timer.start();
+	}
+	
+	public void jump() {
+		if(gameOver) {
+			columns.clear();
+			bird = new Rectangle(DEFAULT_WIDTH/2 - 10, DEFAULT_HEIGHT/2 - 10, 20, 20);
+			
+			yMotion = 0;
+			speed = 0;
+			
+			addColumn(true);
+			addColumn(true);
+			addColumn(true);
+			
+			gameOver = false; 
+		}
+		if(!started) {
+			started = true;
+		} else if(!gameOver) {
+			if(yMotion > 0) {
+				yMotion = 0;
+			}
+			yMotion -= 10;
+		}
 	}
 	
 	public void addColumn(boolean start) {
@@ -99,11 +127,15 @@ public class FlappyBird implements ActionListener {
 			bird.y += yMotion;
 			
 			for(Rectangle column: columns) {
-				if(bird.intersects(column))
+				if(bird.intersects(column)) {
+					bird.x = column.x - bird.width;
 					gameOver = true;
+				}
 			}
-			if(bird.y > DEFAULT_HEIGHT - 120 || bird.y < 0)
+			if(bird.y > DEFAULT_HEIGHT - 120 - bird.width || bird.y < 0) {
+				bird.y = DEFAULT_HEIGHT - 120 - bird.width;
 				gameOver = true;
+			}
 				
 		}
 		renderer.repaint(); // double buffering.googleIt
@@ -129,13 +161,34 @@ public class FlappyBird implements ActionListener {
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", 1, 100));
 		
+		if(!started) { // make this game started ????
+			g.drawString("Click to Start", 75, DEFAULT_HEIGHT/2 - 50);
+		}
+		
 		if(gameOver) {
-			g.drawString("Game Over", 75, DEFAULT_HEIGHT/2 - 50);
+			g.drawString("Game Over", 100, DEFAULT_HEIGHT/2 - 50);
 		}
 	}
 	
 	public static void main(String[] args) {
 		flappyBird = new FlappyBird();
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		jump();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {}
 
 }
